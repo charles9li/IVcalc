@@ -2,7 +2,21 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def info_general(number):
+def get_name(number):
+    """
+    Returns Pokémon species name given a Pokédex number.
+    :param number: Pokédex number
+    :return: Pokémon species name
+    """
+    p = _info_general(number)
+    table = p.table
+    tbody = table.tbody
+    row = tbody.contents[2]
+    name = row.contents[3].text
+    return name
+
+
+def _info_general(number):
     """
     Returns BeautifulSoup instance of containing general Pokémon info.
 
