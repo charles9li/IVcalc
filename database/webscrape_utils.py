@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def _info_general(number):
+def info_general(number):
     """
     Returns BeautifulSoup instance of containing general Pokémon info.
 
