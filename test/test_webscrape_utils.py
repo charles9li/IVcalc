@@ -8,6 +8,12 @@ class TestPokemonInfo(unittest.TestCase):
         pokemon = PokemonInfo(1)
         self.assertEqual("Bulbasaur", pokemon.name, "Should be Bulbasaur")
 
+    def test_base_states(self):
+        pokemon = PokemonInfo(1)
+        self.assertEqual([45, 49, 49, 65, 65, 45], pokemon.base_stats)
+        pokemon = PokemonInfo(3)
+        self.assertEqual([80, 82, 83, 100, 100, 80], pokemon.base_stats)
+
 
 if __name__ == '__main__':
     unittest.main()
