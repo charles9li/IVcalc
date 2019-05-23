@@ -18,6 +18,7 @@ class PokemonInfo:
         self.number = number
         self.number_string = self._dex_number()
         self._soup = self._create_soup()
+        self._info_full = self._info_full()
         self._info_general = self._info_general()
         self.name = self._get_name()
 
@@ -39,11 +40,18 @@ class PokemonInfo:
 
         :return: BeautifulSoup instance containing general Pokémon info
         """
+        return self._info_full.p
+
+    def _info_full(self):
+        """
+        Returns BeautifulSoup instance of containing full Pokémon info.
+
+        :return: BeautifulSoup instance containing general Pokémon info
+        """
         table = self._soup.body.find_all('table')[1]
         row = table.tbody.contents[2]
         data = row.contents[3]
-        div = data.font.contents[2].div
-        return div.p
+        return data.font.contents[2].div
 
     def _create_soup(self):
         """
