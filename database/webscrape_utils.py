@@ -20,7 +20,10 @@ class PokemonInfo:
         self._soup = self._create_soup()
         self._info_full = self._info_full()
         self._info_general = self._info_general()
+        self._info_moves = self._info_moves()
+        self._info_stats = self._info_stats()
         self.name = self._get_name()
+        self.base_stats = self._base_stats()
 
     def _get_name(self):
         """
@@ -34,14 +37,6 @@ class PokemonInfo:
         name = row.contents[3].text
         return name
 
-    def _info_general(self):
-        """
-        Returns BeautifulSoup instance of containing general Pokémon info.
-
-        :return: BeautifulSoup instance containing general Pokémon info
-        """
-        return self._info_full.p
-
     def _info_full(self):
         """
         Returns BeautifulSoup instance of containing full Pokémon info.
@@ -53,6 +48,38 @@ class PokemonInfo:
         data = row.contents[3]
         return data.font.contents[2].div
 
+    def _info_general(self):
+        """
+        Returns BeautifulSoup instance of containing general Pokémon info.
+
+        :return: BeautifulSoup instance containing general Pokémon info
+        """
+        return self._info_full.p
+
+    def _info_moves(self):
+        """
+        Returns BeautifulSoup instance containing Pokémon move and stat info.
+
+        :return: BeautifulSoup instance containing move and stat info
+        """
+        return self._info_full.div
+
+    def _info_stats(self):
+        """
+        Returns BeautifulSoup instance of containing Pokémon base state info.
+
+        :return: BeautifulSoup instance containing base stat info
+        """
+        return self._info_moves.ul.li.contents[-1].contents[-1].tbody.contents[3]
+
+    def _base_stats(self):
+        """
+        Takes stats info nad returns an list of base stats.
+
+        :return: list of base stats of Pokémon
+        """
+        return [int(self._info_stats.contents[i].contents[0]) for i in range(2, 14, 2)]
+
     def _create_soup(self):
         """
         Returns BeautifulSoup instance of the parsed Pokédex page.
@@ -62,14 +89,6 @@ class PokemonInfo:
         url = self._number_to_url()
         response = requests.get(url)
         return BeautifulSoup(response.text, 'html5lib')
-
-    def _number_to_url(self):
-        """
-        Returns the url of the Pokédex page for a given Pokédex number.
-
-        :return: url
-        """
-        return "https://serebii.net/pokedex-sm/" + self.number_string + ".shtml"
 
     def _dex_number(self):
         """
@@ -81,3 +100,11 @@ class PokemonInfo:
         while len(number) < 3:
             number = '0' + number
         return number
+
+    def _number_to_url(self):
+        """
+        Returns the url of the Pokédex page for a given Pokédex number.
+
+        :return: url
+        """
+        return "https://serebii.net/pokedex-sm/" + self.number_string + ".shtml"
