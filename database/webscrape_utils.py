@@ -3,13 +3,25 @@ from bs4 import BeautifulSoup
 
 
 class PokemonInfo:
+    """
+    Contains information about a Pokémon including species name, Pokédex
+    number, evolutions, and base stats.
+    """
+
     def __init__(self, number):
+        """
+        Constructor for PokemonInfo class. Takes in a Pokédex number and
+        scrapes a website to get information.
+
+        :param number: Pokédex number
+        """
         self.number = number
+        self.number_string = self._dex_number()
         self._soup = self._create_soup()
         self._info_general = self._info_general()
-        self.name = self.get_name()
+        self.name = self._get_name()
 
-    def get_name(self):
+    def _get_name(self):
         """
         Returns Pokémon species name given a Pokédex number.
 
@@ -18,7 +30,8 @@ class PokemonInfo:
         p = self._info_general
         table = p.table
         row = table.tbody.contents[2]
-        return row.contents[3].text
+        name = row.contents[3].text
+        return name
 
     def _info_general(self):
         """
@@ -48,8 +61,7 @@ class PokemonInfo:
 
         :return: url
         """
-        num_string = self._dex_number()
-        return "https://serebii.net/pokedex-sm/" + num_string + ".shtml"
+        return "https://serebii.net/pokedex-sm/" + self.number_string + ".shtml"
 
     def _dex_number(self):
         """
