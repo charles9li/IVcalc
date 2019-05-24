@@ -104,6 +104,7 @@ class PokemonInfo:
         output = "Dex# Name" + " "*13
         output = output + "HP ATK DEF SPA SPD SPE"
         print(output)
+        print("="*len(output))
 
     def print_info(self):
         output = self._dex_num_str + " "*2
