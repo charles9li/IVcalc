@@ -6,6 +6,9 @@ import sqlite3
 conn = sqlite3.connect('pokemon.db')
 c = conn.cursor()
 
+# Delete previous table
+c.execute("DROP TABLE [IF EXISTS] data")
+
 # Create table
 c.execute("CREATE TABLE IF NOT EXISTS data "
           "(number, name, hp, atk, def, spa, spd, spe)")
