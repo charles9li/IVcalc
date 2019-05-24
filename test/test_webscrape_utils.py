@@ -7,6 +7,8 @@ class TestPokemonInfo(unittest.TestCase):
     def test_name(self):
         pokemon = PokemonInfo(1)
         self.assertEqual("Bulbasaur", pokemon.name, "Should be Bulbasaur")
+        pokemon = PokemonInfo(3)
+        self.assertEqual("Venusaur", pokemon.name, "Should be Venusaur")
 
     def test_base_states(self):
         pokemon = PokemonInfo(1)
