@@ -1,5 +1,5 @@
 import unittest
-from webscrape.webscrape_utils import PokemonInfo
+from scrape.webscrape_utils import PokemonInfo
 
 
 class TestPokemonInfo(unittest.TestCase):
