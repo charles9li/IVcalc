@@ -10,5 +10,6 @@ def print_child_names(item):
         print(child.name)
 
 
-pokemon = PokemonInfo(25)
-print(pokemon.base_stats)
+pokemon = PokemonInfo(1)
+# print_child_names(pokemon._stats_tag().parent.parent.parent.contents[3])
+print(pokemon._stats_tag().parent.parent.parent.contents[3].contents[2])

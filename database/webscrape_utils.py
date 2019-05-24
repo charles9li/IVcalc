@@ -8,77 +8,22 @@ class PokemonInfo:
     number, evolutions, and base stats.
     """
 
-    def __init__(self, number):
+    def __init__(self, dex_num):
         """
         Constructor for PokemonInfo class. Takes in a Pokédex number and
         scrapes a website to get information.
 
-        :param number: Pokédex number
+        :param dex_num: Pokédex number
         """
-        self.number = number
-        self.number_string = self._dex_number()
+        self.dex_num = dex_num
+        self._dex_num_str = self._dex_num_str()
         self._soup = self._create_soup()
-        self._info_full = self._info_full()
-        self._info_general = self._info_general()
-        self._info_moves = self._info_moves()
-        self._info_stats = self._info_stats()
         self.name = self._get_name()
-        self.base_stats = self._base_stats()
+        self.base_stats = self._get_base_stats()
 
-    def _get_name(self):
-        """
-        Returns Pokémon species name given a Pokédex number.
-
-        :return: Pokémon species name
-        """
-        p = self._info_general
-        table = p.table
-        row = table.tbody.contents[2]
-        name = row.contents[3].text
-        return name
-
-    def _info_full(self):
-        """
-        Returns BeautifulSoup instance of containing full Pokémon info.
-
-        :return: BeautifulSoup instance containing general Pokémon info
-        """
-        table = self._soup.body.find_all('table')[1]
-        row = table.tbody.contents[2]
-        data = row.contents[3]
-        return data.font.contents[2].div
-
-    def _info_general(self):
-        """
-        Returns BeautifulSoup instance of containing general Pokémon info.
-
-        :return: BeautifulSoup instance containing general Pokémon info
-        """
-        return self._info_full.p
-
-    def _info_moves(self):
-        """
-        Returns BeautifulSoup instance containing Pokémon move and stat info.
-
-        :return: BeautifulSoup instance containing move and stat info
-        """
-        return self._info_full.div
-
-    def _info_stats(self):
-        """
-        Returns BeautifulSoup instance of containing Pokémon base state info.
-
-        :return: BeautifulSoup instance containing base stat info
-        """
-        return self._info_moves.ul.li.contents[-1].contents[-1].tbody.contents[3]
-
-    def _base_stats(self):
-        """
-        Takes stats info nad returns an list of base stats.
-
-        :return: list of base stats of Pokémon
-        """
-        return [int(self._info_stats.contents[i].contents[0]) for i in range(2, 14, 2)]
+    #################
+    # SOUP CREATION #
+    #################
 
     def _create_soup(self):
         """
@@ -90,21 +35,62 @@ class PokemonInfo:
         response = requests.get(url)
         return BeautifulSoup(response.text, 'html5lib')
 
-    def _dex_number(self):
-        """
-        Converts an integer number to a 3-digit string.
-
-        :return: dex number in the form of a 3-digit string
-        """
-        number = str(self.number)
-        while len(number) < 3:
-            number = '0' + number
-        return number
-
     def _number_to_url(self):
         """
         Returns the url of the Pokédex page for a given Pokédex number.
 
         :return: url
         """
-        return "https://serebii.net/pokedex-sm/" + self.number_string + ".shtml"
+        return "https://serebii.net/pokedex-sm/" + self._dex_num_str + ".shtml"
+
+    def _dex_num_str(self):
+        """
+        Converts an integer number to a 3-digit string.
+
+        :return: dex number in the form of a 3-digit string
+        """
+        number = str(self.dex_num)
+        while len(number) < 3:
+            number = '0' + number
+        return number
+
+    ########
+    # NAME #
+    ########
+
+    def _get_name(self):
+        tag = self._name_tag()
+        return tag.parent.next_sibling.next_sibling.contents[3].text
+
+    def _name_tag(self):
+        return self._soup.find(self._has_name_text)
+
+    ##############
+    # BASE STATS #
+    ##############
+
+    def _get_base_stats(self):
+        tag = self._stats_tag()
+        tag = tag.parent.parent.parent.contents[3]
+        return [int(tag.contents[i].text) for i in range(2, 14, 2)]
+
+    def _stats_tag(self):
+        return self._soup.find(self._has_stats_text)
+
+    ###########
+    # FILTERS #
+    ###########
+
+    @staticmethod
+    def _has_name_text(tag):
+        try:
+            return tag.text == "Name" and tag['class'][0] == "fooevo"
+        except AttributeError:
+            return False
+
+    @staticmethod
+    def _has_stats_text(tag):
+        try:
+            return tag.text == "Stats" and tag.name == "b"
+        except AttributeError:
+            return False
